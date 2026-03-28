@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>法學研討會布告欄 - 管理後台</title>
+  <style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --primary: #1a3a5c; --primary-light: #2a5a8c; --accent: #c8a45c;
+  --bg: #f0f2f5; --bg-card: #ffffff; --text: #2c2c2c; --text-light: #6b6b6b;
+  --border: #e0ddd8; --gov-color: #8b1a1a; --uni-color: #1a4a8b;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06); --radius: 8px;
+  --green: #28a745; --red: #dc3545; --yellow: #ffc107;
+}
+body { font-family: "Noto Sans TC","Microsoft JhengHei",sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+
+/* Header */
+.header { background: var(--primary); color: #fff; padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+.header h1 { font-size: 1.3rem; font-weight: 700; }
+.header-right { display: flex; align-items: center; gap: 1rem; font-size: 0.85rem; }
+.header-right a { color: var(--accent); text-decoration: none; }
+.header-right a:hover { text-decoration: underline; }
+
+/* Stats bar */
+.stats-bar { background: #fff; border-bottom: 1px solid var(--border); padding: 0.8rem 1.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center; }
+.stat { font-size: 0.85rem; display: flex; align-items: center; gap: 0.3rem; }
+.stat-num { font-weight: 700; font-size: 1.1rem; }
+.stat-num.pending { color: #856404; }
+.stat-num.published { color: var(--green); }
+.stat-num.rejected { color: var(--red); }
+
+/* Filter tabs */
+.filter-tabs { display: flex; gap: 0.3rem; margin-left: auto; }
+.ftab { padding: 0.35rem 0.9rem; border: 1px solid var(--border); background: #fff; color: var(--text-light); border-radius: 16px; cursor: pointer; font-size: 0.82rem; }
+.ftab:hover { border-color: var(--primary); }
+.ftab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+/* Batch actions */
+.batch-bar { background: #fff3cd; padding: 0.5rem 1.5rem; display: none; align-items: center; gap: 0.8rem; font-size: 0.85rem; border-bottom: 1px solid #ffeaa7; }
+.batch-bar.show { display: flex; }
+.batch-bar button { padding: 0.3rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; color: #fff; }
+.batch-bar .b-approve { background: var(--green); }
+.batch-bar .b-reject { background: var(--red); }
+.batch-bar .b-pending { background: #6c757d; }
+
+/* Table */
+.table-container { padding: 1rem 1.5rem; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+th { background: var(--bg); text-align: left; padding: 0.6rem 0.8rem; font-weight: 600; color: var(--text-light); border-bottom: 2px solid var(--border); white-space: nowrap; }
+td { padding: 0.6rem 0.8rem; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+tr:hover { background: #f8f9fa; }
+.cb-col { width: 30px; }
+.status-col { width: 80px; }
+.action-col { width: 180px; white-space: nowrap; }
+
+/* Status badges */
+.badge { display: inline-block; font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 10px; font-weight: 600; }
+.badge.pending { background: #fff3cd; color: #856404; }
+.badge.published { background: #d4edda; color: #155724; }
+.badge.rejected { background: #f8d7da; color: #721c24; }
+
+/* Category dot */
+.cat-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.3rem; vertical-align: middle; }
+.cat-dot.government { background: var(--gov-color); }
+.cat-dot.university { background: var(--uni-color); }
+
+/* Action buttons */
+.btn { padding: 0.25rem 0.6rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.78rem; color: #fff; transition: opacity 0.2s; }
+.btn:hover { opacity: 0.85; }
+.btn-approve { background: var(--green); }
+.btn-reject { background: var(--red); }
+.btn-pending { background: #6c757d; }
+.btn-view { background: var(--primary); }
+
+/* Field masked */
+.field-masked { color: #bbb; font-style: italic; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header { flex-direction: column; align-items: flex-start; }
+  .stats-bar { flex-direction: column; gap: 0.5rem; }
+  .filter-tabs { margin-left: 0; }
+  .table-container { padding: 0.5rem; }
+  td, th { padding: 0.4rem; font-size: 0.8rem; }
+}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>管理後台</h1>
+    <div class="header-right">
+      <span id="lastUpdated"></span>
+      <a href="index.html" target="_blank">前往前台</a>
+    </div>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat">總計 <span class="stat-num" id="statTotal">0</span></div>
+    <div class="stat">待審核 <span class="stat-num pending" id="statPending">0</span></div>
+    <div class="stat">已上架 <span class="stat-num published" id="statPublished">0</span></div>
+    <div class="stat">已退回 <span class="stat-num rejected" id="statRejected">0</span></div>
+    <div class="filter-tabs">
+      <button class="ftab active" data-filter="all">全部</button>
+      <button class="ftab" data-filter="pending">待審核</button>
+      <button class="ftab" data-filter="published">已上架</button>
+      <button class="ftab" data-filter="rejected">已退回</button>
+    </div>
+  </div>
+
+  <div class="batch-bar" id="batchBar">
+    <span><strong id="batchCount">0</strong> 筆已選</span>
+    <button class="b-approve" onclick="batchAction('published')">全部通過</button>
+    <button class="b-reject" onclick="batchAction('rejected')">全部退回</button>
+    <button class="b-pending" onclick="batchAction('pending')">設為待審</button>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th class="cb-col"><input type="checkbox" id="selectAll"></th>
+          <th class="status-col">狀態</th>
+          <th>來源</th>
+          <th>標題</th>
+          <th>日期</th>
+          <th>時間</th>
+          <th>地點</th>
+          <th class="action-col">操作</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script>
+(function () {
+  'use strict';
+  const STORAGE_KEY = 'law_seminar_statuses';
+  let seminars = [], statusFilter = 'all', selected = new Set();
+
+  function loadStatuses() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); } catch(e) { return {}; } }
+  function saveStatuses(m) { localStorage.setItem(STORAGE_KEY, JSON.stringify(m)); }
+  function setStatus(id, status) {
+    const m = loadStatuses(); m[id] = status; saveStatuses(m);
+    const s = seminars.find(x => x.id === id);
+    if (s) s.status = status;
+  }
+
+  function updateStats() {
+    const c = { pending:0, published:0, rejected:0 };
+    seminars.forEach(s => { if (c[s.status] !== undefined) c[s.status]++; });
+    document.getElementById('statTotal').textContent = seminars.length;
+    document.getElementById('statPending').textContent = c.pending;
+    document.getElementById('statPublished').textContent = c.published;
+    document.getElementById('statRejected').textContent = c.rejected;
+  }
+
+  function getFiltered() {
+    if (statusFilter === 'all') return seminars;
+    return seminars.filter(s => s.status === statusFilter);
+  }
+
+  function render() {
+    const filtered = getFiltered();
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = '';
+    selected.clear();
+    updateBatchBar();
+
+    filtered.forEach(s => {
+      const tr = document.createElement('tr');
+      const statusLabel = {pending:'待審核',published:'已上架',rejected:'已退回'}[s.status]||'待審核';
+      const timeH = s.time || '<span class="field-masked">未提供</span>';
+      const locH = s.location || '<span class="field-masked">未提供</span>';
+
+      tr.innerHTML = `
+        <td class="cb-col"><input type="checkbox" class="row-cb" data-id="${s.id}"></td>
+        <td><span class="badge ${s.status}">${statusLabel}</span></td>
+        <td><span class="cat-dot ${s.category}"></span>${s.source}</td>
+        <td><strong>${s.title}</strong></td>
+        <td style="white-space:nowrap">${s.date}</td>
+        <td>${timeH}</td>
+        <td>${locH}</td>
+        <td>
+          ${s.status !== 'published' ? `<button class="btn btn-approve" onclick="doAction('${s.id}','published')">通過</button>` : ''}
+          ${s.status !== 'rejected' ? `<button class="btn btn-reject" onclick="doAction('${s.id}','rejected')">退回</button>` : ''}
+          ${s.status !== 'pending' ? `<button class="btn btn-pending" onclick="doAction('${s.id}','pending')">待審</button>` : ''}
+          <a class="btn btn-view" href="${s.url}" target="_blank" rel="noopener noreferrer">查看</a>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Checkbox events
+    tbody.querySelectorAll('.row-cb').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) selected.add(cb.dataset.id); else selected.delete(cb.dataset.id);
+        updateBatchBar();
+      });
+    });
+    updateStats();
+  }
+
+  function updateBatchBar() {
+    const bar = document.getElementById('batchBar');
+    document.getElementById('batchCount').textContent = selected.size;
+    bar.classList.toggle('show', selected.size > 0);
+  }
+
+  // Global actions
+  window.doAction = function(id, status) {
+    setStatus(id, status);
+    render();
+  };
+
+  window.batchAction = function(status) {
+    selected.forEach(id => setStatus(id, status));
+    selected.clear();
+    render();
+  };
+
+  // Select all
+  document.getElementById('selectAll').addEventListener('change', function() {
+    const cbs = document.querySelectorAll('.row-cb');
+    cbs.forEach(cb => { cb.checked = this.checked; if (this.checked) selected.add(cb.dataset.id); else selected.delete(cb.dataset.id); });
+    updateBatchBar();
+  });
+
+  // Filter tabs
+  document.querySelectorAll('.ftab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      statusFilter = tab.dataset.filter;
+      document.getElementById('selectAll').checked = false;
+      render();
+    });
+  });
+
+  // Init
+  const saved = loadStatuses();
+  seminars = (DATA.seminars||[]).map(s => {
+    if (!s.sourceUrl) { try { s.sourceUrl = new URL(s.url).origin+'/'; } catch(e) { s.sourceUrl = s.url; } }
+    s.status = saved[s.id] || s.status || 'pending';
+    return s;
+  });
+  document.getElementById('lastUpdated').textContent = `最後更新：${new Date(DATA.lastUpdated).toLocaleString('zh-TW')}`;
+  render();
+})();
+  </script>
+</body>
+</html>
