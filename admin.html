@@ -126,6 +126,7 @@ tr:hover { background: #f8f9fa; }
           <th>日期</th>
           <th>時間</th>
           <th>地點</th>
+          <th>信心度</th>
           <th class="action-col">操作</th>
         </tr>
       </thead>
@@ -175,14 +176,20 @@ tr:hover { background: #f8f9fa; }
       const timeH = s.time || '<span class="field-masked">未提供</span>';
       const locH = s.location || '<span class="field-masked">未提供</span>';
 
+      const conf = s.confidence || 'unknown';
+      const confBadge = conf === 'high' ? '<span class="badge published" title="'+((s.matchReason||''))+'">高</span>'
+                       : conf === 'medium' ? '<span class="badge pending" title="'+((s.matchReason||''))+'">中</span>'
+                       : '<span class="badge rejected">低</span>';
+
       tr.innerHTML = `
         <td class="cb-col"><input type="checkbox" class="row-cb" data-id="${s.id}"></td>
         <td><span class="badge ${s.status}">${statusLabel}</span></td>
         <td><span class="cat-dot ${s.category}"></span>${s.source}</td>
-        <td><strong>${s.title}</strong></td>
+        <td><strong>${s.title}</strong><br><small style="color:#999;">${s.matchReason||''}</small></td>
         <td style="white-space:nowrap">${s.date}</td>
         <td>${timeH}</td>
         <td>${locH}</td>
+        <td>${confBadge}</td>
         <td>
           ${s.status !== 'published' ? `<button class="btn btn-approve" onclick="doAction('${s.id}','published')">通過</button>` : ''}
           ${s.status !== 'rejected' ? `<button class="btn btn-reject" onclick="doAction('${s.id}','rejected')">退回</button>` : ''}
