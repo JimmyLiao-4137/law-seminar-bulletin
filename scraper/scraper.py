@@ -55,31 +55,77 @@ session.headers.update({
     "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
 })
 
-# 活動形式關鍵字（研討會、公聽會等）
-SEMINAR_KEYWORDS = [
-    "研討會", "研討", "論壇", "公聽會", "聽證會", "座談會", "座談",
-    "研習", "學術", "工作坊", "workshop", "seminar", "conference",
-    "forum", "symposium", "講座", "演講", "學術活動", "發表會",
+# ===== 兩階段關鍵字篩選 =====
+#
+# 第一階段（必要條件）：確認是「對外公開活動」
+#   - 標題必須包含至少一個活動形式關鍵字
+#   - 分為高信心（直接確認）和低信心（需第二階段輔助）
+#
+# 第二階段（輔助條件）：確認活動內容與「法律」相關
+#   - 大學法律系所來源：通過第一階段即可（系所本身即法律領域）
+#   - 政府機關來源：需同時通過第一階段 + 第二階段
+#
+
+# 第一階段：活動形式關鍵字
+# 高信心：這些詞本身就明確代表對外活動
+EVENT_PRIMARY = [
+    "研討會", "公聽會", "聽證會", "座談會", "論壇",
+    "學術研討", "國際研討", "演講", "講座",
+    "工作坊", "發表會",
+    "seminar", "conference", "forum", "symposium", "workshop",
 ]
 
-# 法律主題關鍵字（政府機關來源需額外比對此清單）
+# 低信心：可能是活動，但也可能是一般公告（需搭配第二階段確認）
+EVENT_SECONDARY = [
+    "研討", "座談", "研習", "學術活動", "學術交流",
+    "圓桌", "說明會", "培訓", "進修",
+]
+
+# 排除詞：即使符合活動關鍵字，包含這些詞的不是對外活動
+EVENT_EXCLUDE = [
+    "內部會議", "內部研習", "人事公告", "徵才", "招標",
+    "決標", "採購", "預算", "標案", "差勤", "薪資",
+    "績效考核", "出國報告", "內部訓練",
+]
+
+# 第二階段：法律主題關鍵字（政府機關來源需比對）
 LAW_KEYWORDS = [
-    "法律", "法制", "法規", "法案", "法學", "立法", "修法", "釋憲",
-    "司法", "訴訟", "裁判", "判決", "審判", "檢察", "偵查",
+    # 法律核心
+    "法律", "法制", "法規", "法案", "法學", "立法", "修法", "釋憲", "草案",
+    # 司法
+    "司法", "訴訟", "裁判", "判決", "審判", "檢察", "偵查", "辯護",
+    # 法律部門
     "憲法", "民法", "刑法", "行政法", "商法", "公法", "私法",
-    "人權", "基本權", "正當程序", "法治",
-    "著作權", "專利", "商標", "智慧財產", "個資", "隱私",
+    # 基本權利
+    "人權", "基本權", "正當程序", "法治", "權利保障",
+    # 智財
+    "著作權", "專利", "商標", "智慧財產", "個資", "隱私", "營業秘密",
+    # 經濟法
     "公平交易", "競爭法", "消費者保護", "消保",
-    "勞動法", "勞基法", "環境法", "金融法", "證券", "保險法",
+    # 勞動/社會
+    "勞動法", "勞基法", "勞動基準", "勞工權益",
+    # 環境
+    "環境法", "環評", "碳費", "碳權", "氣候變遷因應",
+    # 金融
+    "金融法", "證券", "保險法", "虛擬資產", "洗錢防制",
+    # 國際
     "國際法", "條約", "公約", "海洋法",
-    "刑事", "民事", "行政訴訟", "家事", "少年",
-    "調解", "仲裁", "ADR", "法遵", "合規", "compliance",
-    "反貪腐", "廉政", "洗錢防制", "資恐防制",
-    "數位治理", "AI法制", "科技法", "電商法", "網路法",
-    "性別平等", "性騷擾防治", "兒少保護", "長照法制",
-    "都市計畫", "土地法", "建築法", "不動產",
-    "選舉", "罷免", "公投", "政黨法",
-    "稅法", "財稅", "關稅", "遺產稅",
+    # 訴訟類型
+    "刑事", "民事", "行政訴訟", "家事", "少年事件",
+    # 爭議解決
+    "調解", "仲裁", "ADR", "法遵", "合規",
+    # 廉政
+    "反貪腐", "廉政", "利益衝突", "陽光法案",
+    # 科技法
+    "AI法制", "科技法", "數位中介", "網路治理", "數位治理",
+    # 社會法
+    "性別平等", "性騷擾防治", "兒少保護", "長照",
+    # 不動產/國土
+    "都市計畫", "土地法", "建築法", "不動產", "國土計畫",
+    # 選舉
+    "選舉", "罷免", "公投", "政黨",
+    # 稅法
+    "稅法", "財稅", "關稅",
 ]
 
 # 日期正則
@@ -132,22 +178,64 @@ def parse_time(text):
     return None
 
 
-def is_seminar_related(text, category="university"):
-    """檢查文字是否為法律相關研討會/公聽會。
-    大學來源：只需符合活動形式關鍵字。
-    政府來源：需同時符合活動形式 + 法律主題關鍵字。
+def classify_event(title, description="", category="university"):
+    """兩階段判斷：是否為法律相關對外活動。
+
+    回傳 (is_event, confidence, reason)
+      is_event: True/False
+      confidence: 'high' / 'medium' / 'low'
+      reason: 判斷說明（用於 log）
+
+    第一階段：標題是否為對外活動？
+    第二階段：活動內容是否與法律相關？
     """
-    if not text:
-        return False
-    text_lower = text.lower()
-    has_seminar = any(kw in text_lower for kw in SEMINAR_KEYWORDS)
-    if not has_seminar:
-        return False
-    # 大學法律系所本身就是法律領域，不需額外比對
+    if not title:
+        return False, None, "無標題"
+
+    combined = (title + " " + description).lower()
+    title_lower = title.lower()
+
+    # === 排除檢查 ===
+    if any(ex in title_lower for ex in EVENT_EXCLUDE):
+        return False, None, f"排除詞命中"
+
+    # === 第一階段：確認是對外活動 ===
+    primary_hit = [kw for kw in EVENT_PRIMARY if kw in title_lower]
+    secondary_hit = [kw for kw in EVENT_SECONDARY if kw in title_lower]
+
+    if not primary_hit and not secondary_hit:
+        return False, None, "非活動類型"
+
+    is_high_confidence = bool(primary_hit)
+
+    # === 第二階段：確認與法律相關 ===
+
+    # 大學法律系所 → 通過第一階段即可（系所本身即法律領域）
     if category == "university":
-        return True
-    # 政府機關需額外確認與法律相關
-    return any(kw in text_lower for kw in LAW_KEYWORDS)
+        if is_high_confidence:
+            return True, "high", f"大學+高信心活動({primary_hit[0]})"
+        else:
+            return True, "medium", f"大學+低信心活動({secondary_hit[0]})"
+
+    # 政府機關 → 需額外確認法律主題
+    # 用標題+描述合併搜尋，提高命中率
+    law_hit_title = [kw for kw in LAW_KEYWORDS if kw in title_lower]
+    law_hit_desc = [kw for kw in LAW_KEYWORDS if kw in description.lower()] if description else []
+
+    if is_high_confidence:
+        # 高信心活動（研討會/公聽會/演講）
+        if law_hit_title:
+            return True, "high", f"高信心活動({primary_hit[0]})+標題法律詞({law_hit_title[0]})"
+        elif law_hit_desc:
+            return True, "medium", f"高信心活動({primary_hit[0]})+描述法律詞({law_hit_desc[0]})"
+        else:
+            return False, None, f"高信心活動但無法律關聯"
+    else:
+        # 低信心活動（研討/座談/研習）→ 標題必須有法律詞
+        if law_hit_title:
+            return True, "medium", f"低信心活動({secondary_hit[0]})+標題法律詞({law_hit_title[0]})"
+        else:
+            return False, None, f"低信心活動且無法律關聯"
 
 
 def should_run():
@@ -316,9 +404,15 @@ def scrape_source(source):
             # 清理標題
             title = re.sub(r"\s+", " ", title).strip()
 
-            # 篩選研討會相關內容（政府機關需同時符合法律主題）
-            if not title or len(title) < 5 or not is_seminar_related(title, category):
+            # 兩階段篩選：先確認是活動，再確認與法律相關
+            if not title or len(title) < 5:
                 continue
+
+            is_event, confidence, reason = classify_event(title, "", category)
+            if not is_event:
+                logger.debug(f"  跳過: {title[:30]}... ({reason})")
+                continue
+            logger.debug(f"  命中: {title[:30]}... ({reason}, 信心:{confidence})")
 
             # 完整連結（確保是個別文章頁，而非列表首頁）
             if link:
@@ -442,8 +536,21 @@ def scrape_source(source):
                 except Exception:
                     pass
 
+            # 取得描述後，用描述重新評估（政府機關可能標題無法律詞但描述有）
+            desc_text = seminar.get("description", "")
+            if desc_text and category == "government" and confidence != "high":
+                is_event2, confidence2, reason2 = classify_event(title, desc_text, category)
+                if is_event2 and confidence2:
+                    confidence = confidence2
+                    reason = reason2
+                elif not is_event2:
+                    # 加上描述後仍不符合 → 跳過
+                    logger.debug(f"  二次篩選淘汰: {title[:30]}... ({reason2})")
+                    continue
+
+            seminar["confidence"] = confidence
             results.append(seminar)
-            logger.info(f"  找到: {title[:40]}...")
+            logger.info(f"  找到[{confidence}]: {title[:40]}... ({reason})")
 
         except Exception as e:
             logger.debug(f"  處理項目失敗: {e}")
