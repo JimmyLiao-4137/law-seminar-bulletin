@@ -146,6 +146,65 @@ body {
 }
 .card-link-row a:hover { text-decoration: underline; }
 
+/* Unverified field masking */
+.field-masked {
+  color: transparent; background: repeating-linear-gradient(90deg, #ddd 0, #ddd 8px, #eee 8px, #eee 16px);
+  border-radius: 3px; user-select: none; pointer-events: none; display: inline-block;
+  min-width: 60px; min-height: 1em;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block; font-size: 0.68rem; padding: 0.1rem 0.5rem;
+  border-radius: 10px; font-weight: 600; margin-left: 0.4rem; vertical-align: middle;
+}
+.status-badge.pending { background: #fff3cd; color: #856404; }
+.status-badge.published { background: #d4edda; color: #155724; }
+.status-badge.rejected { background: #f8d7da; color: #721c24; }
+
+/* Admin panel */
+.admin-toggle {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 50;
+  background: var(--primary); color: #fff; border: none; border-radius: 50%;
+  width: 48px; height: 48px; font-size: 1.3rem; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: transform 0.2s;
+}
+.admin-toggle:hover { transform: scale(1.1); }
+
+.admin-bar {
+  display: none; background: #fff3cd; border-bottom: 2px solid #ffc107;
+  padding: 0.6rem 1rem; text-align: center; font-size: 0.85rem; color: #856404;
+}
+.admin-bar.show { display: block; }
+.admin-bar button {
+  margin-left: 0.5rem; padding: 0.3rem 0.8rem; border: 1px solid #856404;
+  background: #fff; border-radius: 4px; cursor: pointer; font-size: 0.8rem;
+}
+.admin-bar button:hover { background: #ffc107; color: #000; }
+.admin-bar button.active { background: #856404; color: #fff; }
+
+/* Review actions in modal */
+.review-actions {
+  display: none; margin-top: 1rem; padding-top: 1rem;
+  border-top: 2px dashed var(--border); gap: 0.5rem;
+}
+.review-actions.show { display: flex; flex-wrap: wrap; }
+.btn-approve {
+  padding: 0.5rem 1.2rem; background: #28a745; color: #fff;
+  border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+}
+.btn-approve:hover { background: #218838; }
+.btn-reject {
+  padding: 0.5rem 1.2rem; background: #dc3545; color: #fff;
+  border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+}
+.btn-reject:hover { background: #c82333; }
+.btn-pending {
+  padding: 0.5rem 1.2rem; background: #ffc107; color: #000;
+  border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+}
+.btn-pending:hover { background: #e0a800; }
+
 .no-results { text-align: center; padding: 3rem; color: var(--text-light); font-size: 1.1rem; }
 
 /* Modal */
@@ -251,6 +310,19 @@ body {
     </div>
   </div>
 
+  <!-- 管理後台切換鈕 -->
+  <button class="admin-toggle" id="adminToggle" title="管理後台">&#x2699;</button>
+
+  <!-- 管理列 -->
+  <div class="admin-bar" id="adminBar">
+    <span>&#x1F512; 管理模式</span>
+    <button id="viewAll" class="active">全部</button>
+    <button id="viewPending">待審核</button>
+    <button id="viewPublished">已上架</button>
+    <button id="viewRejected">已退回</button>
+    <span style="margin-left:1rem;" id="adminStats"></span>
+  </div>
+
   <footer class="footer">
     <p>法學研討會布告欄 &copy; 2026 | 資料定期自動更新</p>
   </footer>
@@ -301,6 +373,9 @@ body {
   let activeCategory = 'all';
   let activeSources = new Set();
   let searchQuery = '';
+  let adminMode = false;
+  let statusFilter = 'all'; // all, pending, published, rejected
+  const STORAGE_KEY = 'law_seminar_statuses';
 
   // DOM refs
   const timeline = document.getElementById('timeline');
@@ -344,8 +419,36 @@ body {
     return Object.entries(g).sort((a, b) => a[0].localeCompare(b[0]));
   }
 
+  // === 審核狀態管理（localStorage）===
+  function loadStatuses() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { return {}; }
+  }
+  function saveStatuses(map) { localStorage.setItem(STORAGE_KEY, JSON.stringify(map)); }
+  function getStatus(id) { return loadStatuses()[id] || 'pending'; }
+  function setStatus(id, status) {
+    const m = loadStatuses(); m[id] = status; saveStatuses(m);
+    const s = seminars.find(x => x.id === id);
+    if (s) s.status = status;
+  }
+
+  // === 欄位遮隱 ===
+  function masked(text, fieldName, vf) {
+    if (!vf || vf[fieldName]) return text || '';
+    if (!text) return '<span class="field-masked">未提供</span>';
+    return text; // 有值就顯示，即使未驗證
+  }
+  function maskedRequired(text, fieldName, vf) {
+    // 必填欄位：無值時遮隱
+    if (!text) return '<span class="field-masked">資料待確認</span>';
+    return text;
+  }
+
   function getFiltered() {
     return seminars.filter(s => {
+      // 非管理模式只顯示已上架
+      if (!adminMode && s.status !== 'published') return false;
+      // 管理模式下的狀態篩選
+      if (adminMode && statusFilter !== 'all' && s.status !== statusFilter) return false;
       if (activeCategory !== 'all' && s.category !== activeCategory) return false;
       if (activeSources.size > 0 && !activeSources.has(s.source)) return false;
       if (searchQuery) {
@@ -378,34 +481,29 @@ body {
         const logo = logoSvg(s.source, s.category);
         const hasPoster = !!s.posterUrl;
 
+        const vf = s.verifiedFields || {};
+        const statusBadge = adminMode ? `<span class="status-badge ${s.status}">${{pending:'待審核',published:'已上架',rejected:'已退回'}[s.status]||'待審核'}</span>` : '';
         const linkRow = `<div class="card-link-row"><a href="${s.url}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">&#x1F517; 原始公告</a></div>`;
+        const timeHtml = s.time ? s.time : '<span class="field-masked">時間待確認</span>';
+        const locHtml = s.location ? s.location : '<span class="field-masked">地點待確認</span>';
+
+        const cardBody = `
+          <div class="card-content">
+            <img class="card-logo" src="${logo}" alt="${s.source}">
+            <div class="card-info">
+              <div class="card-source ${s.category}">${s.source}${statusBadge}</div>
+              <div class="card-title">${s.title}</div>
+              <div class="card-meta"><span class="meta-time">${timeHtml}</span><span class="meta-location">${locHtml}</span></div>
+              <div class="card-tags">${tagsHtml(s.tags)}</div>
+              ${linkRow}
+            </div>
+          </div>`;
 
         if (hasPoster) {
           card.classList.add('card-has-poster');
-          card.innerHTML = `
-            <img class="card-poster" src="${posterSvg(s)}" alt="${s.title}" loading="lazy">
-            <div class="card-content">
-              <img class="card-logo" src="${logo}" alt="${s.source}">
-              <div class="card-info">
-                <div class="card-source ${s.category}">${s.source}</div>
-                <div class="card-title">${s.title}</div>
-                <div class="card-meta"><span class="meta-time">${s.time}</span><span class="meta-location">${s.location}</span></div>
-                <div class="card-tags">${tagsHtml(s.tags)}</div>
-                ${linkRow}
-              </div>
-            </div>`;
+          card.innerHTML = `<img class="card-poster" src="${posterSvg(s)}" alt="${s.title}" loading="lazy">${cardBody}`;
         } else {
-          card.innerHTML = `
-            <div class="card-content">
-              <img class="card-logo" src="${logo}" alt="${s.source}">
-              <div class="card-info">
-                <div class="card-source ${s.category}">${s.source}</div>
-                <div class="card-title">${s.title}</div>
-                <div class="card-meta"><span class="meta-time">${s.time}</span><span class="meta-location">${s.location}</span></div>
-                <div class="card-tags">${tagsHtml(s.tags)}</div>
-                ${linkRow}
-              </div>
-            </div>`;
+          card.innerHTML = cardBody;
         }
         card.addEventListener('click', () => openModal(s));
         group.appendChild(card);
@@ -417,26 +515,45 @@ body {
   function openModal(s) {
     const hasPoster = !!s.posterUrl;
     const d = formatDate(s.date);
+    const vf = s.verifiedFields || {};
+    const timeHtml = s.time ? s.time : '<span class="field-masked">時間待確認</span>';
+    const locHtml = s.location ? s.location : '<span class="field-masked">地點待確認</span>';
+    const descHtml = s.description ? s.description : '<span class="field-masked">說明待補充</span>';
+    const statusLabel = {pending:'待審核',published:'已上架',rejected:'已退回'}[s.status]||'待審核';
+
     modalBody.innerHTML = `
       ${hasPoster ? `<img class="modal-poster" src="${posterSvg(s)}" alt="${s.title}">` : ''}
       <div class="modal-content">
-        <div class="modal-source ${s.category}">${s.source}</div>
+        <div class="modal-source ${s.category}">${s.source}${adminMode ? ` <span class="status-badge ${s.status}">${statusLabel}</span>` : ''}</div>
         <h2 class="modal-title">${s.title}</h2>
         <div class="modal-details">
           <span>\u{1F4C5} ${d.display} ${d.weekday}</span>
-          <span>\u{1F552} ${s.time}</span>
-          <span>\u{1F4CD} ${s.location}</span>
+          <span>\u{1F552} ${timeHtml}</span>
+          <span>\u{1F4CD} ${locHtml}</span>
         </div>
-        <p class="modal-description">${s.description}</p>
+        <p class="modal-description">${descHtml}</p>
         <div class="modal-tags">${tagsHtml(s.tags)}</div>
         <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
           <a class="modal-link" href="${s.url}" target="_blank" rel="noopener noreferrer">前往原始公告頁面</a>
           <a class="modal-link" href="${s.sourceUrl}" target="_blank" rel="noopener noreferrer" style="background:var(--text-light);">${s.source} 官網</a>
         </div>
+        <div class="review-actions ${adminMode ? 'show' : ''}" id="reviewActions">
+          <button class="btn-approve" onclick="reviewAction('${s.id}','published')">&#x2705; 通過上架</button>
+          <button class="btn-reject" onclick="reviewAction('${s.id}','rejected')">&#x274C; 退回</button>
+          <button class="btn-pending" onclick="reviewAction('${s.id}','pending')">&#x23F3; 設為待審</button>
+        </div>
       </div>`;
     modalOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
+
+  // 審核動作（掛到 window 供 onclick 使用）
+  window.reviewAction = function(id, newStatus) {
+    setStatus(id, newStatus);
+    closeModal();
+    updateAdminStats();
+    render();
+  };
 
   function closeModal() {
     modalOverlay.classList.remove('open');
@@ -479,15 +596,67 @@ body {
   modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  // Init - ensure each seminar has sourceUrl (fallback to url's origin)
+  // === Admin mode ===
+  const adminToggle = document.getElementById('adminToggle');
+  const adminBar = document.getElementById('adminBar');
+
+  adminToggle.addEventListener('click', () => {
+    adminMode = !adminMode;
+    adminBar.classList.toggle('show', adminMode);
+    adminToggle.style.background = adminMode ? '#dc3545' : 'var(--primary)';
+    adminToggle.innerHTML = adminMode ? '&#x2716;' : '&#x2699;';
+    updateAdminStats();
+    render();
+  });
+
+  // Admin status filter buttons
+  ['viewAll','viewPending','viewPublished','viewRejected'].forEach(btnId => {
+    const btn = document.getElementById(btnId);
+    const map = {viewAll:'all',viewPending:'pending',viewPublished:'published',viewRejected:'rejected'};
+    btn.addEventListener('click', () => {
+      statusFilter = map[btnId];
+      document.querySelectorAll('.admin-bar button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    });
+  });
+
+  function updateAdminStats() {
+    const counts = {pending:0, published:0, rejected:0};
+    seminars.forEach(s => { if (counts[s.status] !== undefined) counts[s.status]++; });
+    document.getElementById('adminStats').textContent =
+      `待審:${counts.pending} | 已上架:${counts.published} | 已退回:${counts.rejected}`;
+  }
+
+  // Init
+  const savedStatuses = loadStatuses();
   seminars = (DATA.seminars || []).map(s => {
+    // 補上 sourceUrl
     if (!s.sourceUrl) {
       try { s.sourceUrl = new URL(s.url).origin + '/'; } catch(e) { s.sourceUrl = s.url; }
+    }
+    // 載入已儲存的審核狀態
+    if (savedStatuses[s.id]) {
+      s.status = savedStatuses[s.id];
+    } else if (!s.status) {
+      s.status = 'pending';
+    }
+    // 預設 verifiedFields
+    if (!s.verifiedFields) {
+      s.verifiedFields = { title: true, date: true, url: true, time: !!s.time, location: !!s.location, description: !!s.description };
     }
     return s;
   });
   lastUpdated.textContent = `最後更新：${new Date(DATA.lastUpdated).toLocaleString('zh-TW')}`;
   buildSourceFilters();
+  // 預設非管理模式：只顯示已上架。若無已上架項目，自動進入管理模式
+  if (!seminars.some(s => s.status === 'published')) {
+    adminMode = true;
+    adminBar.classList.add('show');
+    adminToggle.style.background = '#dc3545';
+    adminToggle.innerHTML = '&#x2716;';
+  }
+  updateAdminStats();
   render();
 })();
   </script>

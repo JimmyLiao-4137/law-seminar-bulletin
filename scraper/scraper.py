@@ -382,6 +382,16 @@ def scrape_source(source):
                 # 相對路徑已在前面用 urljoin 處理過
                 article_url = link if link.startswith("http") else ""
 
+            # 計算各欄位可信度
+            verified_fields = {
+                "title": bool(title and len(title) >= 5),
+                "date": bool(date and date != datetime.now().strftime("%Y-%m-%d")),
+                "url": bool(article_url),
+                "time": bool(time_str),
+                "location": False,
+                "description": False,
+            }
+
             seminar = {
                 "id": seminar_id,
                 "title": title,
@@ -396,6 +406,8 @@ def scrape_source(source):
                 "posterUrl": poster_local,
                 "logoUrl": f"assets/logos/{source_id}.svg",
                 "tags": [],
+                "status": "pending",
+                "verifiedFields": verified_fields,
             }
 
             # 嘗試從詳細頁面取得更多資訊
@@ -410,6 +422,7 @@ def scrape_source(source):
                     if content_el:
                         desc = content_el.get_text(" ", strip=True)
                         seminar["description"] = desc[:300] + ("..." if len(desc) > 300 else "")
+                        seminar["verifiedFields"]["description"] = len(desc) > 20
 
                         # 從描述中解析地點
                         location_match = re.search(
@@ -418,12 +431,14 @@ def scrape_source(source):
                         )
                         if location_match:
                             seminar["location"] = location_match.group(1).strip()[:100]
+                            seminar["verifiedFields"]["location"] = True
 
                         # 從描述中解析時間
                         if not time_str:
                             time_str = parse_time(desc)
                             if time_str:
                                 seminar["time"] = time_str
+                                seminar["verifiedFields"]["time"] = True
                 except Exception:
                     pass
 
