@@ -320,9 +320,15 @@ def scrape_source(source):
             if not title or len(title) < 5 or not is_seminar_related(title, category):
                 continue
 
-            # 完整連結
+            # 完整連結（確保是個別文章頁，而非列表首頁）
             if link:
                 link = urljoin(url, link)
+                # 排除指向首頁或列表頁本身的連結
+                if link.rstrip("/") == url.rstrip("/"):
+                    link = ""
+                # 排除 javascript:, mailto:, # 開頭的無效連結
+                if link and (link.startswith("javascript:") or link.startswith("mailto:") or link == "#"):
+                    link = ""
 
             # 解析日期
             text_content = item.get_text(" ", strip=True)
@@ -368,6 +374,14 @@ def scrape_source(source):
                 except Exception:
                     pass
 
+            # 驗證連結可達性：確保 link 是完整且有效的 URL
+            article_url = ""
+            if link and link.startswith("http"):
+                article_url = link
+            elif link:
+                # 相對路徑已在前面用 urljoin 處理過
+                article_url = link if link.startswith("http") else ""
+
             seminar = {
                 "id": seminar_id,
                 "title": title,
@@ -377,7 +391,8 @@ def scrape_source(source):
                 "time": time_str,
                 "location": "",
                 "description": "",
-                "url": link or url,
+                "url": article_url or url,
+                "sourceUrl": url,
                 "posterUrl": poster_local,
                 "logoUrl": f"assets/logos/{source_id}.svg",
                 "tags": [],
