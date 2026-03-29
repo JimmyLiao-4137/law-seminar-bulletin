@@ -146,6 +146,24 @@
       "url": "https://ipc.judicial.gov.tw/tw/np-1303-1.html", "type": "list_page", "selectors": {}
     },
 
+    { "_comment": "===== 法律出版社 =====" },
+    {
+      "id": "angle-seminar",
+      "name": "元照出版－研討會新訊",
+      "category": "university",
+      "url": "https://www.angle.com.tw/post_news/news_show.asp",
+      "type": "list_page",
+      "selectors": { "list": "table tr, .list-group-item, article, .news-item", "title": "a", "link": "a", "date": ".date, time, td" }
+    },
+    {
+      "id": "angle-lecture",
+      "name": "元照出版－月旦講座",
+      "category": "university",
+      "url": "https://www.angle.com.tw/event/media/",
+      "type": "list_page",
+      "selectors": { "list": ".event-item, .list-group-item, article, .card", "title": "a, h3, h4", "link": "a", "date": ".date, time" }
+    },
+
     { "_comment": "===== 大學法律系所 =====" },
     {
       "id": "ntu-law",
