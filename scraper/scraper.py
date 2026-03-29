@@ -756,8 +756,11 @@ def main():
     all_seminars = []
 
     for source in config["sources"]:
-        # 跳過註解項目
+        # 跳過註解項目與停用來源
         if "_comment" in source or "id" not in source:
+            continue
+        if not source.get("enabled", True):
+            logger.info(f"跳過停用來源: {source.get('name', '未知')}")
             continue
         try:
             results = scrape_source(source)

@@ -1,33 +1,6 @@
 {
   "sources": [
-    { "_comment": "===== 一級機關 =====" },
-    {
-      "id": "president",
-      "name": "總統府",
-      "category": "government",
-      "level": 1,
-      "url": "https://www.president.gov.tw/NEWS",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .news-list li, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "ey",
-      "name": "行政院",
-      "category": "government",
-      "level": 1,
-      "url": "https://www.ey.gov.tw/Page/F48AFFC4B5EE8A4A",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "ly",
-      "name": "立法院",
-      "category": "government",
-      "level": 1,
-      "url": "https://www.ly.gov.tw/Pages/List.aspx?nodeid=154",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
+    { "_comment": "===== 核心法律機關（優先爬取）=====" },
     {
       "id": "judicial",
       "name": "司法院",
@@ -36,71 +9,6 @@
       "url": "https://www.judicial.gov.tw/tw/lp-1709-1.html",
       "type": "list_page",
       "selectors": { "list": ".list-group-item, .rwd-table tbody tr", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "exam",
-      "name": "考試院",
-      "category": "government",
-      "level": 1,
-      "url": "https://www.exam.gov.tw/News.aspx?n=848&sms=10615",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "cy",
-      "name": "監察院",
-      "category": "government",
-      "level": 1,
-      "url": "https://www.cy.gov.tw/News.aspx?n=124&sms=8912",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-
-    { "_comment": "===== 二級機關（部會）=====" },
-    {
-      "id": "moi",
-      "name": "內政部",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.moi.gov.tw/News.aspx?n=13875&sms=9009",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "mofa",
-      "name": "外交部",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.mofa.gov.tw/News.aspx?n=104&sms=70",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "mnd",
-      "name": "國防部",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.mnd.gov.tw/PublishTable.aspx?Types=10&title=",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "mof",
-      "name": "財政部",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.mof.gov.tw/singlehtml/339?cntId=",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "moe",
-      "name": "教育部",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.edu.tw/News.aspx",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
     },
     {
       "id": "moj",
@@ -112,166 +20,31 @@
       "selectors": { "list": ".list-group-item, .rwd-table tbody tr, .cp .list ul li", "title": "a", "link": "a", "date": ".date, time" }
     },
     {
-      "id": "moea",
-      "name": "經濟部",
+      "id": "tpi",
+      "name": "法官學院",
       "category": "government",
-      "level": 2,
-      "url": "https://www.moea.gov.tw/MNS/populace/news/NewsList.aspx",
+      "level": 3,
+      "url": "https://tpi.judicial.gov.tw/tw/lp-1911-041.html",
       "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
+      "selectors": { "list": ".list-group-item, .rwd-table tbody tr", "title": "a", "link": "a", "date": ".date, time" }
     },
     {
-      "id": "motc",
-      "name": "交通部",
+      "id": "tcc",
+      "name": "憲法法庭",
       "category": "government",
-      "level": 2,
-      "url": "https://www.motc.gov.tw/ch/app/news_list/list",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "mohw",
-      "name": "衛生福利部",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.mohw.gov.tw/lp-16-1.html",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "mol",
-      "name": "勞動部",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.mol.gov.tw/1607/1632/1633/nodelist",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "moa",
-      "name": "農業部",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.moa.gov.tw/theme_list.php?theme=news&sub_theme=agri",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "moenv",
-      "name": "環境部",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.moenv.gov.tw/atfee/publicinfo/News.aspx",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "moc",
-      "name": "文化部",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.moc.gov.tw/News_List.aspx",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "moda",
-      "name": "數位發展部",
-      "category": "government",
-      "level": 2,
-      "url": "https://moda.gov.tw/press/news",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "ndc",
-      "name": "國家發展委員會",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.ndc.gov.tw/News.aspx?n=114&sms=10648",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "mac",
-      "name": "大陸委員會",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.mac.gov.tw/News.aspx?n=101&sms=66",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "fsc",
-      "name": "金融監督管理委員會",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.fsc.gov.tw/ch/home.jsp?id=96&parentpath=0,2",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "oac",
-      "name": "海洋委員會",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.oac.gov.tw/ch/home.jsp?id=190&parentpath=0,1",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "ocac",
-      "name": "僑務委員會",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.ocac.gov.tw/OCAC/Subsites/Pages/List.aspx?site=0a2e44fc-ab0e-4a15-a83e-d5c4551b0194&nodeid=197",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "vac",
-      "name": "國軍退除役官兵輔導委員會",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.vac.gov.tw/vac_home/index.asp",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "cip",
-      "name": "原住民族委員會",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.cip.gov.tw/zh-tw/news/index.html",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "hakka",
-      "name": "客家委員會",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.hakka.gov.tw/News.aspx",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "nstc",
-      "name": "國家科學及技術委員會",
-      "category": "government",
-      "level": 2,
-      "url": "https://www.nstc.gov.tw/folksonomy/list/e3e0be22-d8f0-43a2-9108-a3485125f826",
+      "level": 3,
+      "url": "https://cons.judicial.gov.tw/docdata.aspx?fid=38",
       "type": "list_page",
       "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
     },
 
-    { "_comment": "===== 獨立機關 =====" },
+    { "_comment": "===== 法律相關獨立機關 =====" },
     {
-      "id": "cec",
-      "name": "中央選舉委員會",
+      "id": "nhrc",
+      "name": "國家人權委員會",
       "category": "government",
       "level": "independent",
-      "url": "https://www.cec.gov.tw/central/cms/news/index",
+      "url": "https://nhrc.cy.gov.tw/News.aspx?n=72&sms=8836",
       "type": "list_page",
       "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
     },
@@ -293,97 +66,84 @@
       "type": "list_page",
       "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
     },
-    {
-      "id": "nhrc",
-      "name": "國家人權委員會",
-      "category": "government",
-      "level": "independent",
-      "url": "https://nhrc.cy.gov.tw/News.aspx?n=72&sms=8836",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
-    },
 
-    { "_comment": "===== 三級機關（重要司法/法律相關）=====" },
+    { "_comment": "===== 其他政府機關（法律相關度較低，部分停用）=====" },
     {
-      "id": "tpi",
-      "name": "法官學院",
+      "id": "ly",
+      "name": "立法院",
       "category": "government",
-      "level": 3,
-      "url": "https://tpi.judicial.gov.tw/tw/lp-1911-041.html",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr", "title": "a", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "aec",
-      "name": "行政執行署",
-      "category": "government",
-      "level": 3,
-      "url": "https://www.aec.moj.gov.tw/7444/7478/7479/nodelist",
+      "level": 1,
+      "url": "https://www.ly.gov.tw/Pages/List.aspx?nodeid=154",
       "type": "list_page",
       "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
     },
     {
-      "id": "mjib",
-      "name": "調查局",
+      "id": "fsc",
+      "name": "金融監督管理委員會",
       "category": "government",
-      "level": 3,
-      "url": "https://www.mjib.gov.tw/news/1",
+      "level": 2,
+      "url": "https://www.fsc.gov.tw/ch/home.jsp?id=96&parentpath=0,2",
       "type": "list_page",
       "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
     },
     {
-      "id": "correct",
-      "name": "矯正署",
+      "id": "mol",
+      "name": "勞動部",
       "category": "government",
-      "level": 3,
-      "url": "https://www.mjac.moj.gov.tw/6398/6400/6401/nodelist",
+      "level": 2,
+      "url": "https://www.mol.gov.tw/1607/1632/1633/nodelist",
       "type": "list_page",
       "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
     },
     {
-      "id": "tipo",
-      "name": "智慧財產局",
+      "id": "mac",
+      "name": "大陸委員會",
       "category": "government",
-      "level": 3,
-      "url": "https://www.tipo.gov.tw/tw/lp-87-1.html",
+      "level": 2,
+      "url": "https://www.mac.gov.tw/News.aspx?n=101&sms=66",
       "type": "list_page",
       "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
     },
+    { "_comment": "以下來源持續 404，暫時停用" },
     {
-      "id": "npa",
-      "name": "警政署",
-      "category": "government",
-      "level": 3,
-      "url": "https://www.npa.gov.tw/ch/app/news/list",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
+      "id": "mofa", "name": "外交部", "category": "government", "enabled": false,
+      "url": "https://www.mofa.gov.tw/News.aspx?n=104&sms=70", "type": "list_page", "selectors": {}
     },
     {
-      "id": "immigration",
-      "name": "移民署",
-      "category": "government",
-      "level": 3,
-      "url": "https://www.immigration.gov.tw/5382/5385/7344/7350/",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
+      "id": "mnd", "name": "國防部", "category": "government", "enabled": false,
+      "url": "https://www.mnd.gov.tw/PublishTable.aspx?Types=10&title=", "type": "list_page", "selectors": {}
     },
     {
-      "id": "ipc",
-      "name": "智慧財產及商業法院",
-      "category": "government",
-      "level": 3,
-      "url": "https://ipc.judicial.gov.tw/tw/np-1303-1.html",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
+      "id": "moea", "name": "經濟部", "category": "government", "enabled": false,
+      "url": "https://www.moea.gov.tw/MNS/populace/news/NewsList.aspx", "type": "list_page", "selectors": {}
     },
     {
-      "id": "tcc",
-      "name": "憲法法庭",
-      "category": "government",
-      "level": 3,
-      "url": "https://cons.judicial.gov.tw/docdata.aspx?fid=38",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
+      "id": "motc", "name": "交通部", "category": "government", "enabled": false,
+      "url": "https://www.motc.gov.tw/ch/app/news_list/list", "type": "list_page", "selectors": {}
+    },
+    {
+      "id": "vac", "name": "國軍退除役官兵輔導委員會", "category": "government", "enabled": false,
+      "url": "https://www.vac.gov.tw/vac_home/index.asp", "type": "list_page", "selectors": {}
+    },
+    {
+      "id": "cip", "name": "原住民族委員會", "category": "government", "enabled": false,
+      "url": "https://www.cip.gov.tw/zh-tw/news/index.html", "type": "list_page", "selectors": {}
+    },
+    {
+      "id": "nstc", "name": "國家科學及技術委員會", "category": "government", "enabled": false,
+      "url": "https://www.nstc.gov.tw/folksonomy/list/e3e0be22-d8f0-43a2-9108-a3485125f826", "type": "list_page", "selectors": {}
+    },
+    {
+      "id": "npa", "name": "警政署", "category": "government", "enabled": false,
+      "url": "https://www.npa.gov.tw/ch/app/news/list", "type": "list_page", "selectors": {}
+    },
+    {
+      "id": "tipo", "name": "智慧財產局", "category": "government", "enabled": false,
+      "url": "https://www.tipo.gov.tw/tw/lp-87-1.html", "type": "list_page", "selectors": {}
+    },
+    {
+      "id": "ipc", "name": "智慧財產及商業法院", "category": "government", "enabled": false,
+      "url": "https://ipc.judicial.gov.tw/tw/np-1303-1.html", "type": "list_page", "selectors": {}
     },
 
     { "_comment": "===== 大學法律系所 =====" },
@@ -394,22 +154,6 @@
       "url": "https://www.law.ntu.edu.tw/index.php/%E6%89%80%E6%9C%89%E6%B4%BB%E5%8B%95",
       "type": "list_page",
       "selectors": { "list": ".event-list .event-item, article, .views-row", "title": "h2 a, h3 a, .title a", "link": "a", "date": ".date, .event-date, time" }
-    },
-    {
-      "id": "scu-law",
-      "name": "東吳大學法學院",
-      "category": "university",
-      "url": "https://www.law.scu.edu.tw/zh_tw/News/",
-      "type": "list_page",
-      "selectors": { "list": ".listCon .d-row, .list-group-item, article", "title": "a, .heading a", "link": "a", "date": ".mdate, .date, time" }
-    },
-    {
-      "id": "fju-law",
-      "name": "輔仁大學法律系",
-      "category": "university",
-      "url": "https://www.laws.fju.edu.tw/NewsAct/news.html",
-      "type": "list_page",
-      "selectors": { "list": ".list-group-item, tbody tr, article", "title": "a, .title", "link": "a", "date": ".date, time" }
     },
     {
       "id": "nccu-law",
@@ -426,30 +170,6 @@
       "url": "https://www.law.ntpu.edu.tw/?page_id=6379",
       "type": "list_page",
       "selectors": { "list": "article, .post, .entry", "title": "h2 a, .entry-title a, a", "link": "a", "date": ".date, time, .entry-date" }
-    },
-    {
-      "id": "pccu-law",
-      "name": "文化大學法律系",
-      "category": "university",
-      "url": "https://law.pccu.edu.tw/p/403-1101-2091.php",
-      "type": "list_page",
-      "selectors": { "list": ".news-list li, article, .list-group-item", "title": "a, .title", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "usc-law",
-      "name": "實踐大學法律系",
-      "category": "university",
-      "url": "https://law.usc.edu.tw/p/403-1195-1003.php",
-      "type": "list_page",
-      "selectors": { "list": ".news-list li, article, .list-group-item", "title": "a, .title", "link": "a", "date": ".date, time" }
-    },
-    {
-      "id": "shu-law",
-      "name": "世新大學法律系",
-      "category": "university",
-      "url": "https://lawsch.wp.shu.edu.tw/category/news/",
-      "type": "list_page",
-      "selectors": { "list": "article, .post, .entry", "title": "h2 a, .entry-title a", "link": "a", "date": ".date, time, .entry-date" }
     },
     {
       "id": "nthu-law",
@@ -498,6 +218,27 @@
       "url": "https://fel.cycu.edu.tw/events/",
       "type": "list_page",
       "selectors": { "list": ".list-group-item, article, .event-item", "title": "a, .title, h3 a", "link": "a", "date": ".date, time" }
+    },
+    { "_comment": "以下大學來源持續失效，暫時停用" },
+    {
+      "id": "scu-law", "name": "東吳大學法學院", "category": "university", "enabled": false,
+      "url": "https://www.law.scu.edu.tw/zh_tw/News/", "type": "list_page", "selectors": {}
+    },
+    {
+      "id": "fju-law", "name": "輔仁大學法律系", "category": "university", "enabled": false,
+      "url": "https://www.laws.fju.edu.tw/NewsAct/news.html", "type": "list_page", "selectors": {}
+    },
+    {
+      "id": "pccu-law", "name": "文化大學法律系", "category": "university", "enabled": false,
+      "url": "https://law.pccu.edu.tw/p/403-1101-2091.php", "type": "list_page", "selectors": {}
+    },
+    {
+      "id": "usc-law", "name": "實踐大學法律系", "category": "university", "enabled": false,
+      "url": "https://law.usc.edu.tw/p/403-1195-1003.php", "type": "list_page", "selectors": {}
+    },
+    {
+      "id": "shu-law", "name": "世新大學法律系", "category": "university", "enabled": false,
+      "url": "https://lawsch.wp.shu.edu.tw/category/news/", "type": "list_page", "selectors": {}
     }
   ]
 }
