@@ -16,11 +16,6 @@ from urllib.parse import urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup
 
-try:
-    import google.generativeai as genai
-    HAS_GEMINI = True
-except ImportError:
-    HAS_GEMINI = False
 
 # === 設定 ===
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -40,10 +35,11 @@ MIN_EVENT_DATE = "2026-04-01"
 # 每個來源最多處理的項目數（只取最新的 N 筆，避免資料過大影響判斷）
 MAX_ITEMS_PER_SOURCE = 20
 
-# === Gemini API 設定 ===
+# === Gemini API 設定（使用 REST API，無需額外套件）===
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
-GEMINI_ENABLED = bool(GEMINI_API_KEY and HAS_GEMINI)
+GEMINI_ENABLED = bool(GEMINI_API_KEY)
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
 
 # 確保目錄存在
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -145,32 +141,28 @@ LAW_KEYWORDS = [
 
 # === 初始化 Gemini ===
 if GEMINI_ENABLED:
-    genai.configure(api_key=GEMINI_API_KEY)
-    gemini_model = genai.GenerativeModel(GEMINI_MODEL)
-    logger.info(f"Gemini AI 已啟用（模型：{GEMINI_MODEL}）")
+    logger.info(f"Gemini AI 已啟用（模型：{GEMINI_MODEL}，REST API）")
 else:
-    gemini_model = None
     if not GEMINI_API_KEY:
         logger.warning("未設定 GEMINI_API_KEY 環境變數，將僅使用關鍵字篩選")
-    elif not HAS_GEMINI:
-        logger.warning("未安裝 google-generativeai 套件，請執行 pip install google-generativeai")
+
+
+def gemini_call(prompt):
+    """透過 REST API 呼叫 Gemini，回傳回應文字。"""
+    url = GEMINI_API_URL.format(model=GEMINI_MODEL, key=GEMINI_API_KEY)
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"temperature": 0.1},
+    }
+    resp = requests.post(url, json=payload, timeout=60)
+    resp.raise_for_status()
+    data = resp.json()
+    return data["candidates"][0]["content"]["parts"][0]["text"]
 
 
 def gemini_classify_batch(candidates, category):
-    """使用 Gemini 批次判斷候選項目是否為法律相關研討會活動。
-
-    Args:
-        candidates: list of dict，每筆含 title, text_content, detail_text
-        category: 'government' 或 'university'
-
-    Returns:
-        list of dict，每筆含：
-          - is_seminar: bool
-          - confidence: 'high'/'medium'/'low'
-          - reason: str
-          - extracted: dict (date, time, location, description, tags)
-    """
-    if not gemini_model or not candidates:
+    """使用 Gemini REST API 批次判斷候選項目是否為法律相關研討會活動。"""
+    if not GEMINI_ENABLED or not candidates:
         return None
 
     items_text = ""
@@ -208,8 +200,7 @@ def gemini_classify_batch(candidates, category):
 {items_text}"""
 
     try:
-        response = gemini_model.generate_content(prompt)
-        text = response.text.strip()
+        text = gemini_call(prompt).strip()
         # 移除可能的 markdown code block 標記
         if text.startswith("```"):
             text = re.sub(r"^```(?:json)?\s*", "", text)
