@@ -756,11 +756,14 @@ def main():
     all_seminars = []
 
     for source in config["sources"]:
+        # 跳過註解項目
+        if "_comment" in source or "id" not in source:
+            continue
         try:
             results = scrape_source(source)
             all_seminars.extend(results)
         except Exception as e:
-            logger.error(f"爬取 {source['name']} 時發生錯誤: {e}")
+            logger.error(f"爬取 {source.get('name', '未知')} 時發生錯誤: {e}")
             continue
 
     logger.info(f"\n本次共爬取到 {len(all_seminars)} 筆研討會資訊")
