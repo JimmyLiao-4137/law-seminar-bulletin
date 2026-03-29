@@ -2,6 +2,7 @@
 """
 法學研討會資訊爬蟲
 從各司法機關及大學法律系所網站爬取研討會資訊，產出 seminars.json
+串接 Google Gemini API 進行 AI 輔助判讀，提升精準度
 """
 
 import json
@@ -14,6 +15,12 @@ from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
+
+try:
+    import google.generativeai as genai
+    HAS_GEMINI = True
+except ImportError:
+    HAS_GEMINI = False
 
 # === 設定 ===
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -29,6 +36,14 @@ SCRAPE_INTERVAL_DAYS = 3
 
 # 只查詢此日期之後的活動
 MIN_EVENT_DATE = "2026-04-01"
+
+# 每個來源最多處理的項目數（只取最新的 N 筆，避免資料過大影響判斷）
+MAX_ITEMS_PER_SOURCE = 20
+
+# === Gemini API 設定 ===
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
+GEMINI_ENABLED = bool(GEMINI_API_KEY and HAS_GEMINI)
 
 # 確保目錄存在
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -127,6 +142,85 @@ LAW_KEYWORDS = [
     # 稅法
     "稅法", "財稅", "關稅",
 ]
+
+# === 初始化 Gemini ===
+if GEMINI_ENABLED:
+    genai.configure(api_key=GEMINI_API_KEY)
+    gemini_model = genai.GenerativeModel(GEMINI_MODEL)
+    logger.info(f"Gemini AI 已啟用（模型：{GEMINI_MODEL}）")
+else:
+    gemini_model = None
+    if not GEMINI_API_KEY:
+        logger.warning("未設定 GEMINI_API_KEY 環境變數，將僅使用關鍵字篩選")
+    elif not HAS_GEMINI:
+        logger.warning("未安裝 google-generativeai 套件，請執行 pip install google-generativeai")
+
+
+def gemini_classify_batch(candidates, category):
+    """使用 Gemini 批次判斷候選項目是否為法律相關研討會活動。
+
+    Args:
+        candidates: list of dict，每筆含 title, text_content, detail_text
+        category: 'government' 或 'university'
+
+    Returns:
+        list of dict，每筆含：
+          - is_seminar: bool
+          - confidence: 'high'/'medium'/'low'
+          - reason: str
+          - extracted: dict (date, time, location, description, tags)
+    """
+    if not gemini_model or not candidates:
+        return None
+
+    items_text = ""
+    for i, c in enumerate(candidates):
+        items_text += f"\n--- 項目 {i+1} ---\n"
+        items_text += f"標題: {c['title']}\n"
+        items_text += f"來源類型: {'大學法律系所' if category == 'university' else '政府機關'}\n"
+        if c.get("text_content"):
+            items_text += f"列表文字: {c['text_content'][:200]}\n"
+        if c.get("detail_text"):
+            items_text += f"詳細內容: {c['detail_text'][:500]}\n"
+
+    prompt = f"""你是一位法律學術活動辨識專家。請判斷以下從網站爬取的項目，是否為「對外公開的法律相關研討會、座談會、論壇、演講、工作坊」等學術活動。
+
+判斷標準：
+1. 必須是「對外公開」的活動（非內部會議、人事公告、招標、徵才等）
+2. 活動形式為：研討會、公聽會、聽證會、座談會、論壇、演講、講座、工作坊、發表會等
+3. 內容須與「法律、法學、司法、法制」相關
+4. 大學法律系所的活動可放寬標準（系所本身即法律領域）
+5. 排除：一般新聞稿、行政公告、人事異動、採購招標、內部訓練
+
+請以 JSON 陣列格式回覆，每筆包含：
+- "index": 項目編號（從1開始）
+- "is_seminar": true/false
+- "confidence": "high"/"medium"/"low"
+- "reason": 簡短判斷理由（中文，20字以內）
+- "date": 活動日期（YYYY-MM-DD 格式，無法判斷則為 null）
+- "time": 活動時間（HH:MM-HH:MM 格式，無法判斷則為 null）
+- "location": 活動地點（無法判斷則為 null）
+- "description": 活動摘要（50字以內，無法判斷則為 null）
+- "tags": 標籤陣列（最多3個，如 ["人權", "司法改革"]）
+
+只回傳 JSON 陣列，不要其他文字。
+
+{items_text}"""
+
+    try:
+        response = gemini_model.generate_content(prompt)
+        text = response.text.strip()
+        # 移除可能的 markdown code block 標記
+        if text.startswith("```"):
+            text = re.sub(r"^```(?:json)?\s*", "", text)
+            text = re.sub(r"\s*```$", "", text)
+        results = json.loads(text)
+        logger.info(f"  Gemini 回傳 {len(results)} 筆判斷結果")
+        return results
+    except Exception as e:
+        logger.warning(f"  Gemini API 呼叫失敗: {e}")
+        return None
+
 
 # 日期正則
 DATE_PATTERNS = [
@@ -375,6 +469,13 @@ def scrape_source(source):
     if not items:
         items = soup.find_all("a", href=True)
 
+    # 只取最新的 N 筆，避免資料過大影響判斷精準度
+    items = items[:MAX_ITEMS_PER_SOURCE]
+    logger.info(f"  取前 {len(items)} 筆項目進行分析")
+
+    # === 第一階段：解析所有項目，收集候選資料 ===
+    candidates = []  # 通過關鍵字初篩的候選項目
+
     for item in items:
         try:
             # 取得標題和連結
@@ -404,23 +505,20 @@ def scrape_source(source):
             # 清理標題
             title = re.sub(r"\s+", " ", title).strip()
 
-            # 兩階段篩選：先確認是活動，再確認與法律相關
             if not title or len(title) < 5:
                 continue
 
+            # 關鍵字初篩（快速排除明顯不相關項目）
             is_event, confidence, reason = classify_event(title, "", category)
             if not is_event:
-                logger.debug(f"  跳過: {title[:30]}... ({reason})")
+                logger.debug(f"  初篩跳過: {title[:30]}... ({reason})")
                 continue
-            logger.debug(f"  命中: {title[:30]}... ({reason}, 信心:{confidence})")
 
-            # 完整連結（確保是個別文章頁，而非列表首頁）
+            # 完整連結
             if link:
                 link = urljoin(url, link)
-                # 排除指向首頁或列表頁本身的連結
                 if link.rstrip("/") == url.rstrip("/"):
                     link = ""
-                # 排除 javascript:, mailto:, # 開頭的無效連結
                 if link and (link.startswith("javascript:") or link.startswith("mailto:") or link == "#"):
                     link = ""
 
@@ -428,7 +526,6 @@ def scrape_source(source):
             text_content = item.get_text(" ", strip=True)
             date = parse_date(text_content)
 
-            # 嘗試從日期選擇器取得日期
             if not date:
                 date_selectors = selectors.get("date", "").split(",")
                 for ds in date_selectors:
@@ -440,41 +537,139 @@ def scrape_source(source):
                             if date:
                                 break
 
-            # 如果還是沒有日期，用今天
             if not date:
                 date = datetime.now().strftime("%Y-%m-%d")
 
-            # 只保留 MIN_EVENT_DATE 之後的活動
             if not is_after_min_date(date):
                 continue
 
             # 解析時間
             time_str = parse_time(text_content) or ""
 
-            # 產生 ID
+            # 取得詳細頁面內容（供 Gemini 分析用）
+            detail_html = None
+            detail_text = ""
+            poster_local = None
             seminar_id = generate_id(source_id, title, date)
 
-            # 嘗試找海報（如果有詳細頁面）
-            poster_url = None
-            poster_local = None
             if link:
                 try:
                     detail_html = fetch_page(link)
                     if detail_html:
                         detail_soup = BeautifulSoup(detail_html, "lxml")
+                        # 嘗試找海報
                         poster_url = find_poster_image(detail_soup, link)
                         if poster_url:
                             poster_local = download_poster(poster_url, seminar_id)
+                        # 取得內文
+                        content_el = detail_soup.select_one(
+                            ".field-body, .content, article, .post-content, .entry-content, "
+                            ".main-content, #content"
+                        )
+                        if content_el:
+                            detail_text = content_el.get_text(" ", strip=True)
                 except Exception:
                     pass
 
-            # 驗證連結可達性：確保 link 是完整且有效的 URL
+            # 驗證連結
             article_url = ""
             if link and link.startswith("http"):
                 article_url = link
-            elif link:
-                # 相對路徑已在前面用 urljoin 處理過
-                article_url = link if link.startswith("http") else ""
+
+            candidates.append({
+                "title": title,
+                "link": link,
+                "article_url": article_url,
+                "text_content": text_content,
+                "detail_text": detail_text,
+                "detail_html": detail_html,
+                "date": date,
+                "time": time_str,
+                "seminar_id": seminar_id,
+                "poster_local": poster_local,
+                "keyword_confidence": confidence,
+                "keyword_reason": reason,
+            })
+
+        except Exception as e:
+            logger.debug(f"  處理項目失敗: {e}")
+            continue
+
+    logger.info(f"  關鍵字初篩通過 {len(candidates)} 筆，送交 AI 判讀")
+
+    # === 第二階段：Gemini AI 精確判讀 ===
+    gemini_results = None
+    if GEMINI_ENABLED and candidates:
+        gemini_results = gemini_classify_batch(candidates, category)
+
+    # === 第三階段：組合結果 ===
+    for i, c in enumerate(candidates):
+        try:
+            title = c["title"]
+            date = c["date"]
+            time_str = c["time"]
+            detail_text = c["detail_text"]
+            article_url = c["article_url"]
+            seminar_id = c["seminar_id"]
+            confidence = c["keyword_confidence"]
+            reason = c["keyword_reason"]
+
+            # Gemini 判讀結果（如有）
+            gemini_item = None
+            if gemini_results and i < len(gemini_results):
+                gemini_item = gemini_results[i]
+
+            if gemini_item:
+                # Gemini 判定為非研討會 → 跳過
+                if not gemini_item.get("is_seminar", False):
+                    logger.info(f"  Gemini 排除: {title[:30]}... ({gemini_item.get('reason', '')})")
+                    continue
+                # 採用 Gemini 的信心度
+                confidence = gemini_item.get("confidence", confidence)
+                reason = f"AI:{gemini_item.get('reason', reason)}"
+            else:
+                # 無 Gemini 時，政府機關來源需二次關鍵字篩選
+                if detail_text and category == "government" and confidence != "high":
+                    is_event2, confidence2, reason2 = classify_event(title, detail_text, category)
+                    if is_event2 and confidence2:
+                        confidence = confidence2
+                        reason = reason2
+                    elif not is_event2:
+                        logger.debug(f"  二次篩選淘汰: {title[:30]}... ({reason2})")
+                        continue
+
+            # 從 Gemini 或正則取得結構化資訊
+            location = ""
+            description = ""
+            tags = []
+
+            if gemini_item:
+                # 優先使用 Gemini 萃取的資訊
+                if gemini_item.get("date"):
+                    date = gemini_item["date"]
+                if gemini_item.get("time"):
+                    time_str = gemini_item["time"]
+                if gemini_item.get("location"):
+                    location = gemini_item["location"]
+                if gemini_item.get("description"):
+                    description = gemini_item["description"]
+                if gemini_item.get("tags"):
+                    tags = gemini_item["tags"][:3]
+
+            # 若 Gemini 沒提供，從 detail_text 正則取
+            if not description and detail_text:
+                description = detail_text[:300] + ("..." if len(detail_text) > 300 else "")
+
+            if not location and detail_text:
+                location_match = re.search(
+                    r"(?:地[點址點]|場地|地點)\s*[:：]\s*(.+?)(?:[。\n]|$)",
+                    detail_text
+                )
+                if location_match:
+                    location = location_match.group(1).strip()[:100]
+
+            if not time_str and detail_text:
+                time_str = parse_time(detail_text) or ""
 
             # 計算各欄位可信度
             verified_fields = {
@@ -482,8 +677,8 @@ def scrape_source(source):
                 "date": bool(date and date != datetime.now().strftime("%Y-%m-%d")),
                 "url": bool(article_url),
                 "time": bool(time_str),
-                "location": False,
-                "description": False,
+                "location": bool(location),
+                "description": bool(description and len(description) > 20),
             }
 
             seminar = {
@@ -493,67 +688,25 @@ def scrape_source(source):
                 "category": category,
                 "date": date,
                 "time": time_str,
-                "location": "",
-                "description": "",
+                "location": location,
+                "description": description,
                 "url": article_url or url,
                 "sourceUrl": url,
-                "posterUrl": poster_local,
+                "posterUrl": c["poster_local"],
                 "logoUrl": f"assets/logos/{source_id}.svg",
-                "tags": [],
+                "tags": tags,
                 "status": "pending",
                 "verifiedFields": verified_fields,
+                "confidence": confidence,
+                "aiVerified": gemini_item is not None,
             }
 
-            # 嘗試從詳細頁面取得更多資訊
-            if link and detail_html:
-                try:
-                    detail_soup = BeautifulSoup(detail_html, "lxml")
-                    # 找描述文字
-                    content_el = detail_soup.select_one(
-                        ".field-body, .content, article, .post-content, .entry-content, "
-                        ".main-content, #content"
-                    )
-                    if content_el:
-                        desc = content_el.get_text(" ", strip=True)
-                        seminar["description"] = desc[:300] + ("..." if len(desc) > 300 else "")
-                        seminar["verifiedFields"]["description"] = len(desc) > 20
-
-                        # 從描述中解析地點
-                        location_match = re.search(
-                            r"(?:地[點址點]|場地|地點)\s*[:：]\s*(.+?)(?:[。\n]|$)",
-                            desc
-                        )
-                        if location_match:
-                            seminar["location"] = location_match.group(1).strip()[:100]
-                            seminar["verifiedFields"]["location"] = True
-
-                        # 從描述中解析時間
-                        if not time_str:
-                            time_str = parse_time(desc)
-                            if time_str:
-                                seminar["time"] = time_str
-                                seminar["verifiedFields"]["time"] = True
-                except Exception:
-                    pass
-
-            # 取得描述後，用描述重新評估（政府機關可能標題無法律詞但描述有）
-            desc_text = seminar.get("description", "")
-            if desc_text and category == "government" and confidence != "high":
-                is_event2, confidence2, reason2 = classify_event(title, desc_text, category)
-                if is_event2 and confidence2:
-                    confidence = confidence2
-                    reason = reason2
-                elif not is_event2:
-                    # 加上描述後仍不符合 → 跳過
-                    logger.debug(f"  二次篩選淘汰: {title[:30]}... ({reason2})")
-                    continue
-
-            seminar["confidence"] = confidence
             results.append(seminar)
-            logger.info(f"  找到[{confidence}]: {title[:40]}... ({reason})")
+            ai_tag = " [AI✓]" if gemini_item else ""
+            logger.info(f"  找到[{confidence}]{ai_tag}: {title[:40]}... ({reason})")
 
         except Exception as e:
-            logger.debug(f"  處理項目失敗: {e}")
+            logger.debug(f"  組合結果失敗: {e}")
             continue
 
     logger.info(f"  {source_name} 共找到 {len(results)} 筆研討會資訊")
@@ -601,6 +754,8 @@ def main():
     logger.info("=" * 50)
     logger.info(f"開始爬取法學研討會資訊（只查詢 {MIN_EVENT_DATE} 之後的活動）")
     logger.info(f"爬取頻率：每 {SCRAPE_INTERVAL_DAYS} 天一次")
+    logger.info(f"每來源最多處理：{MAX_ITEMS_PER_SOURCE} 筆")
+    logger.info(f"Gemini AI 判讀：{'啟用 (' + GEMINI_MODEL + ')' if GEMINI_ENABLED else '停用'}")
     logger.info("=" * 50)
 
     # 載入來源設定

@@ -161,7 +161,7 @@
       "name": "環境部",
       "category": "government",
       "level": 2,
-      "url": "https://www.moenv.gov.tw/",
+      "url": "https://www.moenv.gov.tw/atfee/publicinfo/News.aspx",
       "type": "list_page",
       "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
     },
@@ -318,7 +318,7 @@
       "name": "行政執行署",
       "category": "government",
       "level": 3,
-      "url": "https://www.aec.moj.gov.tw/",
+      "url": "https://www.aec.moj.gov.tw/7444/7478/7479/nodelist",
       "type": "list_page",
       "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
     },
@@ -336,7 +336,7 @@
       "name": "矯正署",
       "category": "government",
       "level": 3,
-      "url": "https://www.mjac.moj.gov.tw/",
+      "url": "https://www.mjac.moj.gov.tw/6398/6400/6401/nodelist",
       "type": "list_page",
       "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
     },
@@ -381,7 +381,7 @@
       "name": "憲法法庭",
       "category": "government",
       "level": 3,
-      "url": "https://cons.judicial.gov.tw/",
+      "url": "https://cons.judicial.gov.tw/docdata.aspx?fid=38",
       "type": "list_page",
       "selectors": { "list": ".list-group-item, .rwd-table tbody tr, article", "title": "a", "link": "a", "date": ".date, time" }
     },
@@ -431,7 +431,7 @@
       "id": "pccu-law",
       "name": "文化大學法律系",
       "category": "university",
-      "url": "https://law.pccu.edu.tw/",
+      "url": "https://law.pccu.edu.tw/p/403-1101-2091.php",
       "type": "list_page",
       "selectors": { "list": ".news-list li, article, .list-group-item", "title": "a, .title", "link": "a", "date": ".date, time" }
     },
@@ -439,7 +439,7 @@
       "id": "usc-law",
       "name": "實踐大學法律系",
       "category": "university",
-      "url": "https://law.usc.edu.tw/",
+      "url": "https://law.usc.edu.tw/p/403-1195-1003.php",
       "type": "list_page",
       "selectors": { "list": ".news-list li, article, .list-group-item", "title": "a, .title", "link": "a", "date": ".date, time" }
     },
@@ -447,7 +447,7 @@
       "id": "shu-law",
       "name": "世新大學法律系",
       "category": "university",
-      "url": "https://lawsch.wp.shu.edu.tw/",
+      "url": "https://lawsch.wp.shu.edu.tw/category/news/",
       "type": "list_page",
       "selectors": { "list": "article, .post, .entry", "title": "h2 a, .entry-title a", "link": "a", "date": ".date, time, .entry-date" }
     },
@@ -455,7 +455,7 @@
       "id": "nthu-law",
       "name": "清華大學科技法律學院",
       "category": "university",
-      "url": "https://www.lst.nthu.edu.tw/",
+      "url": "https://www.lst.nthu.edu.tw/zh_tw/News/",
       "type": "list_page",
       "selectors": { "list": ".listCon .d-row, .list-group-item, article", "title": "a, .heading a", "link": "a", "date": ".mdate, .date, time" }
     },
@@ -463,7 +463,7 @@
       "id": "nycu-law",
       "name": "陽明交通大學科技法律學院",
       "category": "university",
-      "url": "https://law.nycu.edu.tw/",
+      "url": "https://law.nycu.edu.tw/zh_tw/News/",
       "type": "list_page",
       "selectors": { "list": ".listCon .d-row, .list-group-item, article", "title": "a, .heading a", "link": "a", "date": ".mdate, .date, time" }
     },
@@ -471,7 +471,7 @@
       "id": "nchu-law",
       "name": "中興大學法律系",
       "category": "university",
-      "url": "https://law.nchu.edu.tw/",
+      "url": "https://law.nchu.edu.tw/zh_tw/News/",
       "type": "list_page",
       "selectors": { "list": ".listCon .d-row, .list-group-item, article", "title": "a, .heading a", "link": "a", "date": ".mdate, .date, time" }
     },
