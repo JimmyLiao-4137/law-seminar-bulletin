@@ -1,7 +1,6 @@
 # 爬蟲執行產出
 scraper/.last_run
 scraper/scraper.log
-data/posters/
 
 # Python
 __pycache__/
