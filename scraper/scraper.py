@@ -16,6 +16,8 @@ from urllib.parse import urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup
 
+from fb_scraper import scrape_facebook
+
 
 # === 設定 ===
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -768,6 +770,13 @@ def main():
         except Exception as e:
             logger.error(f"爬取 {source.get('name', '未知')} 時發生錯誤: {e}")
             continue
+
+    # === Facebook 粉專搜尋 ===
+    try:
+        fb_results = scrape_facebook(MIN_EVENT_DATE)
+        all_seminars.extend(fb_results)
+    except Exception as e:
+        logger.error(f"Facebook 搜尋失敗: {e}")
 
     logger.info(f"\n本次共爬取到 {len(all_seminars)} 筆研討會資訊")
 

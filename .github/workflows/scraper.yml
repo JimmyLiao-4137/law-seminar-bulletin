@@ -29,6 +29,7 @@ jobs:
       - name: 執行爬蟲
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
         run: python scraper/scraper.py --force
 
       - name: 提交並推送結果
