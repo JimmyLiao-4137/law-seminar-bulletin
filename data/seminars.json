@@ -1,48 +1,6 @@
 {
-  "lastUpdated": "2026-03-28T10:00:00",
+  "lastUpdated": "2026-03-31T19:07:48.076978",
   "seminars": [
-    {
-      "id": "judicial-20260415-001",
-      "title": "司法改革與人權保障國際研討會",
-      "source": "司法院",
-      "category": "government",
-      "date": "2026-04-15",
-      "time": "09:00-17:00",
-      "location": "司法院三樓大禮堂",
-      "description": "探討司法改革之國際趨勢與人權保障機制，邀請國內外學者專家與會交流。主題包含：司法獨立、人權公約內國法化、被害人保護等議題。",
-      "url": "https://www.judicial.gov.tw/",
-      "posterUrl": "data/posters/judicial-20260415.jpg",
-      "logoUrl": "assets/logos/judicial.svg",
-      "tags": ["司法改革", "人權", "國際研討"]
-    },
-    {
-      "id": "tpi-20260420-001",
-      "title": "法官在職進修：AI與司法裁判",
-      "source": "法官學院",
-      "category": "government",
-      "date": "2026-04-20",
-      "time": "09:30-16:30",
-      "location": "法官學院研習教室",
-      "description": "探討人工智慧技術在司法裁判中的應用與挑戰，包含AI輔助量刑、智慧法院建設等議題。",
-      "url": "https://tpi.judicial.gov.tw/",
-      "posterUrl": null,
-      "logoUrl": "assets/logos/tpi.svg",
-      "tags": ["AI", "司法裁判", "在職進修"]
-    },
-    {
-      "id": "moj-20260422-001",
-      "title": "反貪腐國際合作研討會",
-      "source": "法務部",
-      "category": "government",
-      "date": "2026-04-22",
-      "time": "09:00-17:00",
-      "location": "法務部大禮堂",
-      "description": "就反貪腐國際公約之落實、跨國司法互助及資產追回等議題進行研討，邀請各國反貪腐機構代表參加。",
-      "url": "https://www.moj.gov.tw/",
-      "posterUrl": "data/posters/moj-20260422.jpg",
-      "logoUrl": "assets/logos/moj.svg",
-      "tags": ["反貪腐", "國際合作", "司法互助"]
-    },
     {
       "id": "ntu-20260410-001",
       "title": "數位時代之隱私權保護學術研討會",
@@ -55,7 +13,11 @@
       "url": "https://www.law.ntu.edu.tw/",
       "posterUrl": "data/posters/ntu-20260410.jpg",
       "logoUrl": "assets/logos/ntu-law.svg",
-      "tags": ["隱私權", "個資保護", "數位法制"]
+      "tags": [
+        "隱私權",
+        "個資保護",
+        "數位法制"
+      ]
     },
     {
       "id": "nccu-20260412-001",
@@ -69,7 +31,29 @@
       "url": "https://law.nccu.edu.tw/",
       "posterUrl": null,
       "logoUrl": "assets/logos/nccu-law.svg",
-      "tags": ["公司治理", "ESG", "永續發展"]
+      "tags": [
+        "公司治理",
+        "ESG",
+        "永續發展"
+      ]
+    },
+    {
+      "id": "judicial-20260415-001",
+      "title": "司法改革與人權保障國際研討會",
+      "source": "司法院",
+      "category": "government",
+      "date": "2026-04-15",
+      "time": "09:00-17:00",
+      "location": "司法院三樓大禮堂",
+      "description": "探討司法改革之國際趨勢與人權保障機制，邀請國內外學者專家與會交流。主題包含：司法獨立、人權公約內國法化、被害人保護等議題。",
+      "url": "https://www.judicial.gov.tw/",
+      "posterUrl": "data/posters/judicial-20260415.jpg",
+      "logoUrl": "assets/logos/judicial.svg",
+      "tags": [
+        "司法改革",
+        "人權",
+        "國際研討"
+      ]
     },
     {
       "id": "scu-20260418-001",
@@ -83,7 +67,47 @@
       "url": "https://www.law.scu.edu.tw/",
       "posterUrl": "data/posters/scu-20260418.jpg",
       "logoUrl": "assets/logos/scu-law.svg",
-      "tags": ["比較法", "兩岸法制", "東亞"]
+      "tags": [
+        "比較法",
+        "兩岸法制",
+        "東亞"
+      ]
+    },
+    {
+      "id": "tpi-20260420-001",
+      "title": "法官在職進修：AI與司法裁判",
+      "source": "法官學院",
+      "category": "government",
+      "date": "2026-04-20",
+      "time": "09:30-16:30",
+      "location": "法官學院研習教室",
+      "description": "探討人工智慧技術在司法裁判中的應用與挑戰，包含AI輔助量刑、智慧法院建設等議題。",
+      "url": "https://tpi.judicial.gov.tw/",
+      "posterUrl": null,
+      "logoUrl": "assets/logos/tpi.svg",
+      "tags": [
+        "AI",
+        "司法裁判",
+        "在職進修"
+      ]
+    },
+    {
+      "id": "moj-20260422-001",
+      "title": "反貪腐國際合作研討會",
+      "source": "法務部",
+      "category": "government",
+      "date": "2026-04-22",
+      "time": "09:00-17:00",
+      "location": "法務部大禮堂",
+      "description": "就反貪腐國際公約之落實、跨國司法互助及資產追回等議題進行研討，邀請各國反貪腐機構代表參加。",
+      "url": "https://www.moj.gov.tw/",
+      "posterUrl": "data/posters/moj-20260422.jpg",
+      "logoUrl": "assets/logos/moj.svg",
+      "tags": [
+        "反貪腐",
+        "國際合作",
+        "司法互助"
+      ]
     },
     {
       "id": "fju-20260425-001",
@@ -97,7 +121,11 @@
       "url": "https://www.laws.fju.edu.tw/",
       "posterUrl": null,
       "logoUrl": "assets/logos/fju-law.svg",
-      "tags": ["家事法", "兒少權益", "保護"]
+      "tags": [
+        "家事法",
+        "兒少權益",
+        "保護"
+      ]
     },
     {
       "id": "ntpu-20260428-001",
@@ -111,7 +139,11 @@
       "url": "https://www.law.ntpu.edu.tw/",
       "posterUrl": "data/posters/ntpu-20260428.jpg",
       "logoUrl": "assets/logos/ntpu-law.svg",
-      "tags": ["金融科技", "消費者保護", "虛擬資產"]
+      "tags": [
+        "金融科技",
+        "消費者保護",
+        "虛擬資產"
+      ]
     },
     {
       "id": "nthu-20260430-001",
@@ -125,7 +157,11 @@
       "url": "https://www.lst.nthu.edu.tw/",
       "posterUrl": null,
       "logoUrl": "assets/logos/nthu-law.svg",
-      "tags": ["智慧財產", "科技法律", "AI著作權"]
+      "tags": [
+        "智慧財產",
+        "科技法律",
+        "AI著作權"
+      ]
     },
     {
       "id": "nycu-20260505-001",
@@ -139,7 +175,11 @@
       "url": "https://law.nycu.edu.tw/",
       "posterUrl": "data/posters/nycu-20260505.jpg",
       "logoUrl": "assets/logos/nycu-law.svg",
-      "tags": ["數位平台", "言論自由", "網路治理"]
+      "tags": [
+        "數位平台",
+        "言論自由",
+        "網路治理"
+      ]
     },
     {
       "id": "ccu-20260508-001",
@@ -153,7 +193,11 @@
       "url": "https://deptlaw.ccu.edu.tw/",
       "posterUrl": null,
       "logoUrl": "assets/logos/ccu-law.svg",
-      "tags": ["刑事訴訟", "法律修正", "辯護權"]
+      "tags": [
+        "刑事訴訟",
+        "法律修正",
+        "辯護權"
+      ]
     },
     {
       "id": "nchu-20260510-001",
@@ -167,7 +211,11 @@
       "url": "https://law.nchu.edu.tw/",
       "posterUrl": "data/posters/nchu-20260510.jpg",
       "logoUrl": "assets/logos/nchu-law.svg",
-      "tags": ["環境法", "氣候變遷", "淨零轉型"]
+      "tags": [
+        "環境法",
+        "氣候變遷",
+        "淨零轉型"
+      ]
     },
     {
       "id": "nuk-20260515-001",
@@ -181,7 +229,11 @@
       "url": "https://law.nuk.edu.tw/",
       "posterUrl": null,
       "logoUrl": "assets/logos/nuk-law.svg",
-      "tags": ["海洋法", "國際法", "漁業法"]
+      "tags": [
+        "海洋法",
+        "國際法",
+        "漁業法"
+      ]
     },
     {
       "id": "cycu-20260520-001",
@@ -195,7 +247,11 @@
       "url": "https://fel.cycu.edu.tw/",
       "posterUrl": "data/posters/cycu-20260520.jpg",
       "logoUrl": "assets/logos/cycu-law.svg",
-      "tags": ["企業併購", "公平交易", "競爭法"]
+      "tags": [
+        "企業併購",
+        "公平交易",
+        "競爭法"
+      ]
     },
     {
       "id": "pccu-20260522-001",
@@ -209,7 +265,11 @@
       "url": "https://law.pccu.edu.tw/",
       "posterUrl": null,
       "logoUrl": "assets/logos/pccu-law.svg",
-      "tags": ["勞動法", "非典型僱用", "平台經濟"]
+      "tags": [
+        "勞動法",
+        "非典型僱用",
+        "平台經濟"
+      ]
     },
     {
       "id": "usc-20260525-001",
@@ -223,7 +283,11 @@
       "url": "https://law.usc.edu.tw/",
       "posterUrl": null,
       "logoUrl": "assets/logos/usc-law.svg",
-      "tags": ["醫療法", "病人自主權", "醫療糾紛"]
+      "tags": [
+        "醫療法",
+        "病人自主權",
+        "醫療糾紛"
+      ]
     },
     {
       "id": "shu-20260528-001",
@@ -237,7 +301,11 @@
       "url": "https://lawsch.wp.shu.edu.tw/",
       "posterUrl": "data/posters/shu-20260528.jpg",
       "logoUrl": "assets/logos/shu-law.svg",
-      "tags": ["傳播法", "新聞自由", "名譽權"]
+      "tags": [
+        "傳播法",
+        "新聞自由",
+        "名譽權"
+      ]
     }
   ]
 }
