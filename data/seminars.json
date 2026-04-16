@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-13T19:19:26.723448",
+  "lastUpdated": "2026-04-16T19:22:44.286092",
   "seminars": [
     {
       "id": "angle-lecture-20260401-9c8d37",
@@ -366,6 +366,58 @@
         "人權",
         "國際研討"
       ]
+    },
+    {
+      "id": "angle-lecture-20260416-9c3c96",
+      "title": "經典案例實作研討",
+      "source": "元照出版－月旦講座",
+      "category": "university",
+      "date": "2026-04-16",
+      "time": "",
+      "location": "",
+      "description": "課程資訊 講題 民法：財產法 （民總、債總、債各、物權） 主題介紹 葉啓洲 政治大法學法學院教授 【五講】 債務不履行案例實作（一） 債務不履行案例實作（二） 侵權行為案例實作、侵權行為類型區辨 不當得利案例實作、給付與非給付不當得利 物權法與財產法綜合案例實作 預約制 、 線上版 民法：身分法 （親屬、繼承） 主題介紹 林秀雄 政治大學法學院兼任教授 【三講】 非婚生子女之保障 歸扣 特留分扣減權 預約制 、 線上版 民事訴訟法 主題介紹 沈冠伶 臺灣大學法律學院特聘教授 【五講】 民事訴訟之基本原則 民事訴訟之當事人、利害關係人及判決效力 起訴之效力與當事人恆定原則 訴訟標的之特定與爭點整...",
+      "url": "https://www.angle.com.tw/event/practical_discuss_order/",
+      "sourceUrl": "https://www.angle.com.tw/event/media/",
+      "posterUrl": null,
+      "logoUrl": "assets/logos/angle-lecture.svg",
+      "tags": [],
+      "status": "pending",
+      "verifiedFields": {
+        "title": true,
+        "date": false,
+        "url": true,
+        "time": false,
+        "location": false,
+        "description": true
+      },
+      "confidence": "medium",
+      "aiVerified": false
+    },
+    {
+      "id": "angle-lecture-20260416-ca81d0",
+      "title": "民法百年論壇",
+      "source": "元照出版－月旦講座",
+      "category": "university",
+      "date": "2026-04-16",
+      "time": "",
+      "location": "",
+      "description": "探討主題 「民法百年論壇」由王院士澤鑑教授擘劃成立，擬匯聚臺灣民法學界研究動能，一方面回顧百年民法之歷史基礎、法學方法，藉以透視法典之靜態內涵；另一方面展望民法現代化之方向，觀察判例學說與民法發展之動態風貌，期能進行批判性超越，指引民法學向前邁進。內容探究民法各編百年發展之軌跡外，並省思民法與特別法之互動，及分析具有本土特色之議題，兼顧理論與實務、基礎與應用。 推薦影音 民法百年之回顧與展望 民法百年之回顧與展望 王澤鑑／中研院院士、臺灣大學名譽教授 民法百年之歷史基礎 前民法時期條理的表達與實踐——以大理院判例中的公序良俗為例 黃源盛／政治大學法學院特聘教授 台灣民法史上的多源——從日治時期...",
+      "url": "https://www.angle.com.tw/event/mediasell/20250120.aspx",
+      "sourceUrl": "https://www.angle.com.tw/event/media/",
+      "posterUrl": null,
+      "logoUrl": "assets/logos/angle-lecture.svg",
+      "tags": [],
+      "status": "pending",
+      "verifiedFields": {
+        "title": true,
+        "date": false,
+        "url": true,
+        "time": false,
+        "location": false,
+        "description": true
+      },
+      "confidence": "high",
+      "aiVerified": false
     },
     {
       "id": "scu-20260418-001",
