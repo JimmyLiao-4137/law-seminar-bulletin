@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-05-31T19:22:14.522872",
+  "lastUpdated": "2026-06-01T21:37:25.563113",
   "seminars": [
     {
       "id": "angle-lecture-20260401-9c8d37",
@@ -1446,6 +1446,84 @@
         "url": true,
         "time": false,
         "location": false,
+        "description": true
+      },
+      "confidence": "high",
+      "aiVerified": false
+    },
+    {
+      "id": "angle-lecture-20260601-405fdc",
+      "title": "經典實例研討",
+      "source": "元照出版－月旦講座",
+      "category": "university",
+      "date": "2026-06-01",
+      "time": "",
+      "location": "",
+      "description": "〈經典深化課〉預約制 ：任選 兩 科 $6,000 元 ▹▸立即購 近期講座 刑事訴訟法 主題介紹 劉邦揚 中原大學財經法律學系助理教授 【五回】 第一回 強制處分與證據排除法則 第二回 訴訟原理：案件單一性與同一性之分 第三回 訴訟原理：通常訴訟程序與附帶民事審判程序 第四回 訴訟原理：上訴審之要件與一部上訴 第五回 上訴第三審案件與特別救濟程序 全部講座 民法實務研析 陳忠五｜司法院大法官／臺灣大學法律學院兼任教授 $6,000 （共五回） 預約制 、 線上版 民法：財產法 葉啓洲｜政治大學法學院教授 $6,000 （共五回） 預約制 、 線上版 民法：身分法 林秀雄｜政治大學法學院兼任教...",
+      "url": "https://www.angle.com.tw/event/practical_discuss_order/",
+      "sourceUrl": "https://www.angle.com.tw/event/media/",
+      "posterUrl": "data/posters/angle-lecture-20260601-405fdc.jpg",
+      "logoUrl": "assets/logos/angle-lecture.svg",
+      "tags": [],
+      "status": "pending",
+      "verifiedFields": {
+        "title": true,
+        "date": false,
+        "url": true,
+        "time": false,
+        "location": false,
+        "description": true
+      },
+      "confidence": "medium",
+      "aiVerified": false
+    },
+    {
+      "id": "angle-lecture-20260601-b07f97",
+      "title": "民法百年論壇",
+      "source": "元照出版－月旦講座",
+      "category": "university",
+      "date": "2026-06-01",
+      "time": "",
+      "location": "",
+      "description": "探討主題 「民法百年論壇」由王院士澤鑑教授擘劃成立，擬匯聚臺灣民法學界研究動能，一方面回顧百年民法之歷史基礎、法學方法，藉以透視法典之靜態內涵；另一方面展望民法現代化之方向，觀察判例學說與民法發展之動態風貌，期能進行批判性超越，指引民法學向前邁進。內容探究民法各編百年發展之軌跡外，並省思民法與特別法之互動，及分析具有本土特色之議題，兼顧理論與實務、基礎與應用。 推薦影音 民法百年之回顧與展望 民法百年之回顧與展望 王澤鑑／中研院院士、臺灣大學名譽教授 民法百年之歷史基礎 前民法時期條理的表達與實踐——以大理院判例中的公序良俗為例 黃源盛／政治大學法學院特聘教授 台灣民法史上的多源——從日治時期...",
+      "url": "https://www.angle.com.tw/event/mediasell/20250120.aspx",
+      "sourceUrl": "https://www.angle.com.tw/event/media/",
+      "posterUrl": null,
+      "logoUrl": "assets/logos/angle-lecture.svg",
+      "tags": [],
+      "status": "pending",
+      "verifiedFields": {
+        "title": true,
+        "date": false,
+        "url": true,
+        "time": false,
+        "location": false,
+        "description": true
+      },
+      "confidence": "high",
+      "aiVerified": false
+    },
+    {
+      "id": "cycu-law-20260601-6aebdf",
+      "title": "民主雞蛋糕暨校自主學習課程演講─環境運動與台灣民主轉型",
+      "source": "中原大學財經法律系",
+      "category": "university",
+      "date": "2026-06-01",
+      "time": "",
+      "location": "中原大學真知教學大樓510教室",
+      "description": "民主雞蛋糕暨校自主學習課程演講─環境運動與台灣民主轉型 2026-06-01 一般公告 / 活動公告 / 課程公告 報名連結: https://itouch.cycu.edu.tw/go/?w=15440@acpm3 認識台灣民主，不能不認識台灣的民主轉型。台灣的民主之路，並不僅僅是由政治權利運動舖成。事實上，它剛好是藉力於環境運動與各項人權運動共同打造而成。正因為環境權與人權的出路只會是民主政治，也正因為環境與人權運動高度衝擊威權體制，因此，台灣的民主運動與人權運動自始是就在同一條路上前進。 尤其，環境運動是在威權政權意料之外從鄉里之間長出，這個事實，震攝了當時的威權政府，鬆動了當權者對鄰里...",
+      "url": "https://fel.cycu.edu.tw/%e6%b0%91%e4%b8%bb%e9%9b%9e%e8%9b%8b%e7%b3%95%e6%9a%a8%e6%a0%a1%e8%87%aa%e4%b8%bb%e5%ad%b8%e7%bf%92%e8%aa%b2%e7%a8%8b%e6%bc%94%e8%ac%9b%e2%94%80%e7%92%b0%e5%a2%83%e9%81%8b%e5%8b%95%e8%88%87%e5%8f%b0/",
+      "sourceUrl": "https://fel.cycu.edu.tw/events/",
+      "posterUrl": "data/posters/cycu-law-20260601-6aebdf.jpg",
+      "logoUrl": "assets/logos/cycu-law.svg",
+      "tags": [],
+      "status": "pending",
+      "verifiedFields": {
+        "title": true,
+        "date": false,
+        "url": true,
+        "time": false,
+        "location": true,
         "description": true
       },
       "confidence": "high",
