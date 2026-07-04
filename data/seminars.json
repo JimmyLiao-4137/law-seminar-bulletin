@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-01T20:00:49.028020",
+  "lastUpdated": "2026-07-04T19:18:49.562849",
   "seminars": [
     {
       "id": "angle-lecture-20260401-9c8d37",
@@ -2029,6 +2029,58 @@
       "source": "元照出版－月旦講座",
       "category": "university",
       "date": "2026-07-01",
+      "time": "",
+      "location": "",
+      "description": "探討主題 「民法百年論壇」由王院士澤鑑教授擘劃成立，擬匯聚臺灣民法學界研究動能，一方面回顧百年民法之歷史基礎、法學方法，藉以透視法典之靜態內涵；另一方面展望民法現代化之方向，觀察判例學說與民法發展之動態風貌，期能進行批判性超越，指引民法學向前邁進。內容探究民法各編百年發展之軌跡外，並省思民法與特別法之互動，及分析具有本土特色之議題，兼顧理論與實務、基礎與應用。 推薦影音 任選 兩 場 $1,299 元， 三 場 $1,899 元 ▹▸立即購 民法百年之回顧與展望 民法百年之回顧與展望 王澤鑑／中研院院士、臺灣大學名譽教授 民法百年之歷史基礎 前民法時期條理的表達與實踐——以大理院判例中的公序良...",
+      "url": "https://www.angle.com.tw/event/mediasell/20250120.aspx",
+      "sourceUrl": "https://www.angle.com.tw/event/media/",
+      "posterUrl": null,
+      "logoUrl": "assets/logos/angle-lecture.svg",
+      "tags": [],
+      "status": "pending",
+      "verifiedFields": {
+        "title": true,
+        "date": false,
+        "url": true,
+        "time": false,
+        "location": false,
+        "description": true
+      },
+      "confidence": "high",
+      "aiVerified": false
+    },
+    {
+      "id": "angle-lecture-20260704-d29bf7",
+      "title": "經典實例研討",
+      "source": "元照出版－月旦講座",
+      "category": "university",
+      "date": "2026-07-04",
+      "time": "",
+      "location": "",
+      "description": "〈經典深化課〉預約制 ：任選 兩 科 $6,000 元 ▹▸立即購 近期講座 民事訴訟法 主題介紹 沈冠伶 臺灣大學法律學院特聘教授 【三回】 第一回 當事人適格、訴訟擔當與判決對第三人效力 第二回 訴之變更追加與反訴 第三回 訴之合併與上訴效力 刑事訴訟法 主題介紹 顏榕 國立臺北大學法律系副教授 【五回】 第一回 偵查中的辯護權 第二回 傳聞法則 第三回 迴避制度：兼論非常救濟制度 第四回 單一性新解—115憲判4之影響 第五回 羈押制度：兼論人身自由受拘禁被告之保障 全部講座 民法實務研析 陳忠五｜司法院大法官／臺灣大學法律學院兼任教授 $6,000 （共五回） 預約制 、 線上版 民法...",
+      "url": "https://www.angle.com.tw/event/practical_discuss_order/",
+      "sourceUrl": "https://www.angle.com.tw/event/media/",
+      "posterUrl": null,
+      "logoUrl": "assets/logos/angle-lecture.svg",
+      "tags": [],
+      "status": "pending",
+      "verifiedFields": {
+        "title": true,
+        "date": false,
+        "url": true,
+        "time": false,
+        "location": false,
+        "description": true
+      },
+      "confidence": "medium",
+      "aiVerified": false
+    },
+    {
+      "id": "angle-lecture-20260704-a1b0f4",
+      "title": "民法百年論壇",
+      "source": "元照出版－月旦講座",
+      "category": "university",
+      "date": "2026-07-04",
       "time": "",
       "location": "",
       "description": "探討主題 「民法百年論壇」由王院士澤鑑教授擘劃成立，擬匯聚臺灣民法學界研究動能，一方面回顧百年民法之歷史基礎、法學方法，藉以透視法典之靜態內涵；另一方面展望民法現代化之方向，觀察判例學說與民法發展之動態風貌，期能進行批判性超越，指引民法學向前邁進。內容探究民法各編百年發展之軌跡外，並省思民法與特別法之互動，及分析具有本土特色之議題，兼顧理論與實務、基礎與應用。 推薦影音 任選 兩 場 $1,299 元， 三 場 $1,899 元 ▹▸立即購 民法百年之回顧與展望 民法百年之回顧與展望 王澤鑑／中研院院士、臺灣大學名譽教授 民法百年之歷史基礎 前民法時期條理的表達與實踐——以大理院判例中的公序良...",
